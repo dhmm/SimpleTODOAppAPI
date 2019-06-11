@@ -21,7 +21,7 @@ class TodoController extends ApiController
         $tasks = $taskRepository->transformAll();
         return $this->respond($tasks);
     }
-    public function create(Request $request, TaskRepository $taskRepository, EntityManager $em) {
+    public function create(Request $request, TaskRepository $taskRepository, EntityManagerInterface $em) {
         $request = $this->transformJsonBody($resuest);
         if(! $request) {
             return $this->respondValidationError('Not valid request');
