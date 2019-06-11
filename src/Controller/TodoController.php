@@ -38,7 +38,7 @@ class TodoController extends ApiController
             return $this->respondValidationError('Enter the done status');
         }
 
-        $task = new Task;
+        $task = new Task();
         $task->setName($request->get('name'));
         $task->setDone($request->get('done'));
         $em->persist($task);
@@ -46,5 +46,64 @@ class TodoController extends ApiController
 
         return $this->respondCreated($taskRepository->transform($task));
 
+    }
+    /**
+     * @Route("/todo" , methods="PUT")
+     */
+    public function update(Request $request, TaskRepository $taskRepository, EntityManagerinterface $em) {
+        $request = $this->transformJsonBody($request);
+        if(! $request) {
+            return $this->respondValidationError('Not valid request');
+        }
+
+        if(! $request->get('id')) {
+            return $this->respondValidationError('Enter an ID');
+        }
+
+        if(! $request->get('name')) {
+            return $this->respondValidationError('Enter a task name');
+        }
+        
+        if(! $request->get('done')) {
+            return $this->respondValidationError('Enter the done status');
+        }
+
+        $task = $taskRepository->find($request->get('id'));
+        if(! $task) {
+            return $this->respondWithError();
+        }
+        $task->setName($request->get('name'));
+        $task->setDone($request->get('done'));
+        $em->flush();
+
+        return $this->respondUpdated($taskRepository->transform($task));
+    }
+    /**
+     * @Route("/todo" , methods="DELETE")
+     */
+    public function delete(Request $request, TaskRepository $taskRepository, EntityManagerinterface $em) {
+        $request = $this->transformJsonBody($request);
+        if(! $request) {
+            return $this->respondValidationError('Not valid request');
+        }
+
+        if(! $request->get('id')) {
+            return $this->respondValidationError('Enter an ID');
+        }
+
+        $task = $taskRepository->find($request->get('id'));
+        if(! $task) {
+            return $this->respondWithErrors();
+        }
+
+        $em->remove($task);
+        $em->flush();
+
+        $task = $taskRepository->find($request->get('id'));
+        if(! $task) {
+            return $this->respondDeleted();
+        } else {
+            return $this->respondWithErrors();
+        }        
     }
 }

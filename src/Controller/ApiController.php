@@ -19,7 +19,7 @@ class ApiController
     public function respond($data, $headers = []) {
         return new JsonResponse($data , $this->getStatusCode() , $headers);
     }
-    public function respondWithErrors($errors , $headers= []) {
+    public function respondWithErrors($errors = ['An error ocurred'] , $headers= []) {
         $data = [
             'errors' => $errors,
         ];
@@ -37,6 +37,12 @@ class ApiController
     public function respondCreated($data = []) {
         return $this->setStatusCode(201)->respond($data);
     }
+    public function respondUpdated($data = []) {
+        return $this->setStatusCode(201)->respond($data);
+    }
+    public function respondDeleted() {
+        return $this->setStatusCode(201)->respond([]);
+    }
     protected function transformJsonBody(Request $request) {
         $data = json_decode($request->getContent() , true);
 
@@ -48,7 +54,7 @@ class ApiController
             return $request;
         }
 
-        $resuest->request->replace(data);
+        $request->request->replace($data);
 
         return $request;
     }
