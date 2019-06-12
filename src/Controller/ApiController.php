@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ApiController 
-{
+{  
     protected $statusCode = 200;
     public function getStatusCode() {
         return $this->statusCode;
