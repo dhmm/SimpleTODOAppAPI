@@ -41,7 +41,7 @@ class ApiController
         return $this->setStatusCode(201)->respond($data);
     }
     public function respondDeleted() {
-        return $this->setStatusCode(201)->respond([]);
+        return $this->setStatusCode(201)->respond('deleted');
     }
     protected function transformJsonBody(Request $request) {
         $data = json_decode($request->getContent() , true);

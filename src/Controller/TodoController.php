@@ -106,4 +106,50 @@ class TodoController extends ApiController
             return $this->respondWithErrors();
         }        
     }
+
+    /**
+     * @Route("/todo/complete" , methods="POST")
+     */
+    public function complete(Request $request, TaskRepository $taskRepository, EntityManagerInterface $em) {
+      $request = $this->transformJsonBody($request);
+      if(! $request) {
+          return $this->respondValidationError('Not valid request');
+      }
+
+      if(! $request->get('id')) {
+          return $this->respondValidationError('Enter an ID');
+      }
+
+      $task = $taskRepository->find($request->get('id'));
+      if(! $task) {
+          return $this->respondWithError();
+      }      
+      $task->setDone(true);
+      $em->flush();
+
+      return $this->respondUpdated($taskRepository->transform($task));
+    }
+
+    /**
+     * @Route("/todo/uncomplete" , methods="POST")
+     */
+    public function uncomplete(Request $request, TaskRepository $taskRepository, EntityManagerInterface $em) {
+      $request = $this->transformJsonBody($request);
+      if(! $request) {
+          return $this->respondValidationError('Not valid request');
+      }
+
+      if(! $request->get('id')) {
+          return $this->respondValidationError('Enter an ID');
+      }
+
+      $task = $taskRepository->find($request->get('id'));
+      if(! $task) {
+          return $this->respondWithError();
+      }      
+      $task->setDone(false);
+      $em->flush();
+
+      return $this->respondUpdated($taskRepository->transform($task));
+    }
 }
